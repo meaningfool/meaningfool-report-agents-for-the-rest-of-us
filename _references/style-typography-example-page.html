@@ -1,0 +1,262 @@
+<html lang="en" vid="0"><head vid="1">
+    <meta charset="UTF-8" vid="2">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" vid="3">
+    <title vid="4">Agent SDK Technical Report - Documentation Showcase</title>
+    <style vid="5">
+        :root {
+            --bg-acid: #DFFF4F; 
+            --fg-primary: #000000;
+            --bg-dark: #1A1A1A; 
+            --fg-on-dark: #DFFF4F;
+            --border: #000000;
+            --font-sans: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            --font-mono: 'Courier New', Courier, monospace;
+            --sidebar-width: 320px;
+            --code-bg: rgba(0,0,0,0.05);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-acid);
+            color: var(--fg-primary);
+            font-family: var(--font-sans);
+            -webkit-font-smoothing: antialiased;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .mono-label {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-weight: 600;
+        }
+
+        aside {
+            width: var(--sidebar-width);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            background-color: var(--bg-acid);
+            flex-shrink: 0;
+        }
+
+        .sidebar-header {
+            padding: 40px 24px 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .sidebar-header h1 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+
+        nav {
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 20px 24px;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+            text-decoration: none;
+            color: var(--fg-primary);
+        }
+
+        .nav-item.active {
+            background-color: var(--fg-primary);
+            color: var(--bg-acid);
+        }
+
+        .nav-num {
+            font-family: var(--font-mono);
+            font-size: 14px;
+            margin-right: 16px;
+            opacity: 0.6;
+        }
+
+        .active .nav-num { opacity: 1; }
+
+        .nav-title { font-size: 14px; font-weight: 500; }
+
+        main {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 40px;
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        .content-body {
+            padding: 60px 80px;
+            max-width: 1000px;
+        }
+
+        
+        h1 { font-size: 64px; font-weight: 600; margin-bottom: 32px; letter-spacing: -0.03em; line-height: 1.1; }
+        h2 { font-size: 32px; font-weight: 600; margin: 48px 0 24px; border-bottom: 2px solid var(--border); padding-bottom: 8px; }
+        h3 { font-size: 20px; font-weight: 600; margin: 32px 0 16px; text-transform: uppercase; letter-spacing: 0.05em; }
+        
+        p { font-size: 18px; line-height: 1.6; margin-bottom: 24px; }
+        
+        code { font-family: var(--font-mono); background: var(--code-bg); padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
+        
+        pre { 
+            background: var(--bg-dark); 
+            color: var(--fg-on-dark); 
+            padding: 24px; 
+            border-radius: 4px; 
+            margin: 24px 0; 
+            overflow-x: auto;
+            font-family: var(--font-mono);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        .hljs-keyword { color: #FF79C6; }
+        .hljs-string { color: #F1FA8C; }
+        .hljs-comment { color: #6272A4; opacity: 0.7; }
+
+        blockquote {
+            border-left: 8px solid var(--border);
+            padding: 16px 24px;
+            margin: 32px 0;
+            background: rgba(0,0,0,0.03);
+            font-style: italic;
+            font-size: 20px;
+        }
+
+        hr { border: 0; border-top: 1px solid var(--border); margin: 48px 0; }
+
+        ul, ol { margin: 0 0 24px 24px; font-size: 18px; line-height: 1.6; }
+        li { margin-bottom: 8px; }
+
+        strong { font-weight: 800; }
+        em { font-style: italic; }
+
+        .metric-group { display: flex; gap: 48px; }
+        .metric-item span:last-child { display: block; font-size: 24px; font-weight: 500; }
+
+    </style>
+</head>
+<body vid="6">
+
+    <aside vid="7">
+        <div class="sidebar-header" vid="8">
+            <span class="mono-label" vid="9">REPORT</span>
+            <h1 vid="10">Technical Analysis</h1>
+        </div>
+        <nav vid="11">
+            <a href="#" class="nav-item active" vid="12">
+                <span class="nav-num" vid="13">01</span>
+                <span class="nav-title" vid="14">Style Showcase</span>
+            </a>
+            <a href="#" class="nav-item" vid="15">
+                <span class="nav-num" vid="16">02</span>
+                <span class="nav-title" vid="17">SDK Architecture</span>
+            </a>
+            <a href="#" class="nav-item" vid="18">
+                <span class="nav-num" vid="19">03</span>
+                <span class="nav-title" vid="20">Memory Systems</span>
+            </a>
+        </nav>
+    </aside>
+
+    <main vid="21">
+        <div class="top-bar" vid="22">
+            <div class="metric-group" vid="23">
+                <div class="metric-item" vid="24">
+                    <span class="mono-label" vid="25">SUBJECT</span>
+                    <span vid="26">MARKDOWN SPECS</span>
+                </div>
+                <div class="metric-item" vid="27">
+                    <span class="mono-label" vid="28">VERSION</span>
+                    <span vid="29">v2.4.0_FINAL</span>
+                </div>
+            </div>
+            <div class="metric-item" vid="30">
+                <span class="mono-label" vid="31">STATUS</span>
+                <span style="font-size: 24px" vid="32">VERIFIED</span>
+            </div>
+        </div>
+
+        <div class="content-body" vid="33">
+            <h1 vid="34">Markdown Typography &amp; Technical Specs</h1>
+            
+            <p vid="35">
+                This document serves as a comprehensive <strong vid="36">visual reference</strong> for the design system. It demonstrates how <em vid="37">technical documentation</em> should be formatted to maintain clarity while preserving the high-contrast aesthetic of the report.
+            </p>
+
+            <hr vid="38">
+
+            <h2 vid="39">Core Architecture &amp; Loops</h2>
+            <p vid="40">
+                When defining an agent, we use inline identifiers like <code vid="41">AgentRuntime.v1</code> to signify specific instances. The following blockquote highlights the core philosophy of our approach:
+            </p>
+
+            <blockquote vid="42">
+                "Autonomy is not just the ability to act, but the capacity to perceive the environment and adjust internal logic loops <strong vid="43">without human intervention</strong>."
+            </blockquote>
+
+            <h3 vid="44">Implementation Logic</h3>
+            <p vid="45">
+                To initialize a standard agentic swarm, developers must follow these steps:
+            </p>
+            
+            <ol vid="46">
+                <li vid="47">Configure the <strong vid="48">LLM Provider</strong> endpoint.</li>
+                <li vid="49">Define the <em vid="50">spatial awareness</em> parameters.</li>
+                <li vid="51">Inject the <code vid="52">context_window</code> into the main loop.</li>
+            </ol>
+
+            <pre vid="53"><code vid="54"><span class="hljs-comment" vid="55">// Initialize the Swarm Intelligence module</span>
+<span class="hljs-keyword" vid="56">import</span> { AgentSwarm } <span class="hljs-keyword" vid="57">from</span> <span class="hljs-string" vid="58">"@agent-sdk/core"</span>;
+
+<span class="hljs-keyword" vid="59">const</span> swarm = <span class="hljs-keyword" vid="60">new</span> AgentSwarm({
+  id: <span class="hljs-string" vid="61">"tech-analysis-01"</span>,
+  mode: <span class="hljs-string" vid="62">"autonomous"</span>,
+  loops: <span class="hljs-number" vid="63">8</span>
+});
+
+swarm.start();</code></pre>
+
+            <h2 vid="64">Infrastructure Requirements</h2>
+            <p vid="65">
+                Systems must support the following feature set for full compliance:
+            </p>
+
+            <ul vid="66">
+                <li vid="67">Real-time telemetry via <code vid="68">WebSocket</code></li>
+                <li vid="69">Encrypted state storage (AES-256)</li>
+                <li vid="70">Multi-region deployment protocols</li>
+            </ul>
+
+            <hr vid="71">
+
+            <h3 vid="72">Final Summary</h3>
+            <p vid="73">
+                The integration of <em vid="74">markdown-driven</em> documentation ensures that our <strong vid="75">technical analysis</strong> remains readable across all platforms.
+            </p>
+        </div>
+    </main>
+
+</body></html>

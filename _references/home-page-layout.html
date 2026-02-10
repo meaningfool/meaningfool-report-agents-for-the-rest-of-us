@@ -1,0 +1,464 @@
+<html lang="en" vid="0"><head vid="1">
+    <meta charset="UTF-8" vid="2">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" vid="3">
+    <title vid="4">Agent SDK Technical Report</title>
+    <style vid="5">
+        :root {
+            
+            --bg-acid: #DFFF4F; 
+            --fg-primary: #000000;
+            --bg-dark: #1A1A1A; 
+            --fg-on-dark: #DFFF4F;
+            --grid-line: rgba(0, 0, 0, 0.15); 
+            
+            
+            --font-sans: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            --font-mono: 'Courier New', Courier, monospace;
+            
+            
+            --space-xs: 8px;
+            --space-s: 16px;
+            --space-m: 24px;
+            --space-l: 40px;
+            --space-xl: 80px;
+            
+            
+            --radius-sm: 4px; 
+            --radius-map: 6px; 
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-acid);
+            color: var(--fg-primary);
+            font-family: var(--font-sans);
+            -webkit-font-smoothing: antialiased;
+            line-height: 1.4;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        
+        .mono-label {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            opacity: 0.9;
+            font-weight: 600;
+        }
+
+        .icon {
+            width: 20px;
+            height: 20px;
+            stroke-width: 1.5;
+            fill: none;
+            stroke: currentColor;
+        }
+
+        
+        
+        
+        header {
+            padding: var(--space-l) var(--space-l) var(--space-s);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            border-bottom: 1px solid var(--fg-primary);
+        }
+
+        .report-meta {
+            display: flex;
+            gap: var(--space-xl);
+        }
+
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-xs);
+        }
+
+        h1 {
+            font-weight: 400;
+            font-size: 24px;
+            letter-spacing: -0.02em;
+        }
+
+        .large-metric {
+            font-size: 64px;
+            font-weight: 300; 
+            line-height: 1;
+            letter-spacing: -0.03em;
+        }
+
+        
+        main {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); 
+            width: 100%;
+            flex-grow: 1;
+        }
+
+        
+        @media (max-width: 1200px) {
+            main { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 768px) {
+            main { grid-template-columns: 1fr; }
+            header { flex-direction: column; align-items: flex-start; gap: var(--space-m); }
+            .report-meta { gap: var(--space-m); width: 100%; justify-content: space-between; }
+        }
+
+        
+        
+        
+        .section-card {
+            border-right: 1px solid var(--fg-primary);
+            border-bottom: 1px solid var(--fg-primary);
+            padding: var(--space-m);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 400px;
+            transition: background-color 0.2s ease;
+            position: relative;
+            text-decoration: none;
+            color: var(--fg-primary);
+        }
+
+        .section-card:hover {
+            background-color: rgba(255, 255, 255, 0.2); 
+        }
+
+        
+        main > .section-card:nth-child(4n) { border-right: none; }
+        @media (max-width: 1200px) { main > .section-card:nth-child(4n) { border-right: 1px solid var(--fg-primary); } main > .section-card:nth-child(2n) { border-right: none; } }
+        @media (max-width: 768px) { main > .section-card { border-right: none; } }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: var(--space-m);
+        }
+
+        .section-index {
+            font-size: 32px;
+            font-weight: 300;
+        }
+
+        .arrow-link {
+            opacity: 0;
+            transform: translate(-5px, 5px);
+            transition: all 0.3s ease;
+        }
+
+        .section-card:hover .arrow-link {
+            opacity: 1;
+            transform: translate(0, 0);
+        }
+
+        .card-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-s);
+        }
+
+        h2 {
+            font-size: 18px;
+            font-weight: 500;
+            max-width: 90%;
+        }
+
+        p.summary {
+            font-size: 14px;
+            line-height: 1.5;
+            opacity: 0.8;
+            max-width: 28ch; 
+        }
+
+        
+        
+        .tech-visual {
+            margin-top: auto;
+            background-color: var(--bg-dark);
+            height: 140px;
+            width: 100%;
+            border-radius: var(--radius-sm);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+
+        
+        .path-svg {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .path-line {
+            fill: none;
+            stroke: var(--fg-on-dark);
+            stroke-width: 3;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            vector-effect: non-scaling-stroke;
+        }
+
+        
+        .tech-visual::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: 
+                linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        
+        .tech-stack {
+            display: flex;
+            gap: var(--space-xs);
+            margin-top: var(--space-s);
+            align-items: center;
+        }
+
+        .stack-icon {
+            font-size: 10px;
+            font-family: var(--font-mono);
+            border: 1px solid var(--fg-primary);
+            padding: 2px 6px;
+            border-radius: 12px;
+            text-transform: uppercase;
+        }
+
+        .connector-arrow {
+            font-size: 10px;
+        }
+
+    </style>
+</head>
+<body vid="6">
+
+    <header vid="7">
+        <div class="meta-item" vid="8">
+            <span class="mono-label" vid="9">REPORT TYPE</span>
+            <h1 vid="10">Technical Analysis</h1>
+        </div>
+
+        <div class="report-meta" vid="11">
+            <div class="meta-item" vid="12">
+                <span class="mono-label" vid="13">SUBJECT</span>
+                <span style="font-weight: 500" vid="14">AGENT SDKs</span>
+            </div>
+            <div class="meta-item" vid="15">
+                <span class="mono-label" vid="16">DATE</span>
+                <span class="mono-label" vid="17">OCT, 2023</span>
+            </div>
+            <div class="meta-item" vid="18">
+                <span class="mono-label" vid="19">TOTAL SECTIONS</span>
+                <span class="large-metric" vid="20">08</span>
+            </div>
+        </div>
+    </header>
+
+    <main vid="21">
+        
+        <a href="#" class="section-card" vid="22">
+            <div class="card-header" vid="23">
+                <span class="mono-label" vid="24">SECTION</span>
+                <svg class="icon arrow-link" viewBox="0 0 24 24" vid="25"><path d="M7 17L17 7M17 7H7M17 7V17" vid="26"></path></svg>
+            </div>
+            <span class="section-index" vid="27">01</span>
+            
+            <div class="card-content" vid="28">
+                <h2 vid="29">Defining the Agent</h2>
+                <p class="summary" vid="30">Core concepts distinguishing agents from passive LLM chains. Autonomy, perception, and action loops.</p>
+                <div class="tech-stack" vid="31">
+                    <span class="stack-icon" vid="32">LLM</span>
+                    <span class="connector-arrow" vid="33">►</span>
+                    <span class="stack-icon" vid="34">LOOP</span>
+                </div>
+            </div>
+
+            <div class="tech-visual" vid="35">
+                <svg class="path-svg" viewBox="0 0 100 60" preserveAspectRatio="none" vid="36">
+                    <path class="path-line" d="M10,50 L30,45 L30,20 L60,20 L60,40 L90,30" vid="37"></path>
+                </svg>
+            </div>
+        </a>
+
+        
+        <a href="#" class="section-card" vid="38">
+            <div class="card-header" vid="39">
+                <span class="mono-label" vid="40">SECTION</span>
+                <svg class="icon arrow-link" viewBox="0 0 24 24" vid="41"><path d="M7 17L17 7M17 7H7M17 7V17" vid="42"></path></svg>
+            </div>
+            <span class="section-index" vid="43">02</span>
+            
+            <div class="card-content" vid="44">
+                <h2 vid="45">SDK Architecture</h2>
+                <p class="summary" vid="46">Comparative analysis of LangChain, AutoGen, and Semantic Kernel class hierarchies.</p>
+                <div class="tech-stack" vid="47">
+                    <span class="stack-icon" vid="48">PY</span>
+                    <span class="connector-arrow" vid="49">►</span>
+                    <span class="stack-icon" vid="50">TS</span>
+                </div>
+            </div>
+
+            <div class="tech-visual" vid="51">
+                <svg class="path-svg" viewBox="0 0 100 60" preserveAspectRatio="none" vid="52">
+                    <path class="path-line" d="M10,30 L40,30 L40,10 L70,10 L70,50 L90,50" vid="53"></path>
+                </svg>
+            </div>
+        </a>
+
+        
+        <a href="#" class="section-card" vid="54">
+            <div class="card-header" vid="55">
+                <span class="mono-label" vid="56">SECTION</span>
+                <svg class="icon arrow-link" viewBox="0 0 24 24" vid="57"><path d="M7 17L17 7M17 7H7M17 7V17" vid="58"></path></svg>
+            </div>
+            <span class="section-index" vid="59">03</span>
+            
+            <div class="card-content" vid="60">
+                <h2 vid="61">Memory Systems</h2>
+                <p class="summary" vid="62">Vector stores vs. ephemeral context windows. Short-term vs long-term persistence strategies.</p>
+            </div>
+
+            <div class="tech-visual" vid="63">
+                <svg class="path-svg" viewBox="0 0 100 60" preserveAspectRatio="none" vid="64">
+                    <path class="path-line" d="M10,10 Q30,50 50,30 T90,30" vid="65"></path>
+                </svg>
+            </div>
+        </a>
+
+        
+        <a href="#" class="section-card" vid="66">
+            <div class="card-header" vid="67">
+                <span class="mono-label" vid="68">SECTION</span>
+                <svg class="icon arrow-link" viewBox="0 0 24 24" vid="69"><path d="M7 17L17 7M17 7H7M17 7V17" vid="70"></path></svg>
+            </div>
+            <span class="section-index" vid="71">04</span>
+            
+            <div class="card-content" vid="72">
+                <h2 vid="73">Tool Use &amp; APIs</h2>
+                <p class="summary" vid="74">Function calling standards. How agents define, discover, and execute external tools safely.</p>
+                <div class="tech-stack" vid="75">
+                    <span class="stack-icon" vid="76">REST</span>
+                    <span class="connector-arrow" vid="77">►</span>
+                    <span class="stack-icon" vid="78">RPC</span>
+                </div>
+            </div>
+
+            <div class="tech-visual" vid="79">
+                <svg class="path-svg" viewBox="0 0 100 60" preserveAspectRatio="none" vid="80">
+                    <path class="path-line" d="M10,50 C30,50 30,10 50,10 S70,50 90,50" vid="81"></path>
+                </svg>
+            </div>
+        </a>
+
+        
+        <a href="#" class="section-card" vid="82">
+            <div class="card-header" vid="83">
+                <span class="mono-label" vid="84">SECTION</span>
+                <svg class="icon arrow-link" viewBox="0 0 24 24" vid="85"><path d="M7 17L17 7M17 7H7M17 7V17" vid="86"></path></svg>
+            </div>
+            <span class="section-index" vid="87">05</span>
+            
+            <div class="card-content" vid="88">
+                <h2 vid="89">Planning Logic</h2>
+                <p class="summary" vid="90">ReAct, COT, and TOT patterns implemented in production SDKs. Decomposition of complex tasks.</p>
+            </div>
+
+            <div class="tech-visual" vid="91">
+                <svg class="path-svg" viewBox="0 0 100 60" preserveAspectRatio="none" vid="92">
+                    <path class="path-line" d="M20,10 L20,50 M50,10 L50,50 M80,10 L80,50" style="stroke-dasharray: 4,4" vid="93"></path>
+                    <path class="path-line" d="M10,30 L90,30" vid="94"></path>
+                </svg>
+            </div>
+        </a>
+
+        
+        <a href="#" class="section-card" vid="95">
+            <div class="card-header" vid="96">
+                <span class="mono-label" vid="97">SECTION</span>
+                <svg class="icon arrow-link" viewBox="0 0 24 24" vid="98"><path d="M7 17L17 7M17 7H7M17 7V17" vid="99"></path></svg>
+            </div>
+            <span class="section-index" vid="100">06</span>
+            
+            <div class="card-content" vid="101">
+                <h2 vid="102">Multi-Agent Swarms</h2>
+                <p class="summary" vid="103">Orchestration patterns for agent-to-agent communication and hierarchical delegation.</p>
+                <div class="tech-stack" vid="104">
+                    <span class="stack-icon" vid="105">HIVE</span>
+                </div>
+            </div>
+
+            <div class="tech-visual" vid="106">
+                <svg class="path-svg" viewBox="0 0 100 60" preserveAspectRatio="none" vid="107">
+                    <path class="path-line" d="M50,30 L20,50 M50,30 L80,50 M50,30 L50,10" vid="108"></path>
+                    <circle cx="50" cy="30" r="3" fill="#DFFF4F" vid="109"></circle>
+                </svg>
+            </div>
+        </a>
+
+        
+        <a href="#" class="section-card" vid="110">
+            <div class="card-header" vid="111">
+                <span class="mono-label" vid="112">SECTION</span>
+                <svg class="icon arrow-link" viewBox="0 0 24 24" vid="113"><path d="M7 17L17 7M17 7H7M17 7V17" vid="114"></path></svg>
+            </div>
+            <span class="section-index" vid="115">07</span>
+            
+            <div class="card-content" vid="116">
+                <h2 vid="117">Deployment</h2>
+                <p class="summary" vid="118">Serverless runtimes, containerization, and handling state in distributed agent systems.</p>
+            </div>
+
+            <div class="tech-visual" vid="119">
+                <svg class="path-svg" viewBox="0 0 100 60" preserveAspectRatio="none" vid="120">
+                    <rect x="20" y="20" width="20" height="20" stroke="#DFFF4F" fill="none" stroke-width="2" vid="121"></rect>
+                    <rect x="60" y="20" width="20" height="20" stroke="#DFFF4F" fill="none" stroke-width="2" vid="122"></rect>
+                    <path class="path-line" d="M40,30 L60,30" stroke-width="1" vid="123"></path>
+                </svg>
+            </div>
+        </a>
+
+        
+        <a href="#" class="section-card" vid="124">
+            <div class="card-header" vid="125">
+                <span class="mono-label" vid="126">SECTION</span>
+                <svg class="icon arrow-link" viewBox="0 0 24 24" vid="127"><path d="M7 17L17 7M17 7H7M17 7V17" vid="128"></path></svg>
+            </div>
+            <span class="section-index" vid="129">08</span>
+            
+            <div class="card-content" vid="130">
+                <h2 vid="131">Security &amp; Safety</h2>
+                <p class="summary" vid="132">Guardrails, prompt injection defense, and human-in-the-loop authorization flows.</p>
+                <div class="tech-stack" vid="133">
+                    <span class="stack-icon" vid="134">AUTH</span>
+                </div>
+            </div>
+
+            <div class="tech-visual" vid="135">
+                <svg class="path-svg" viewBox="0 0 100 60" preserveAspectRatio="none" vid="136">
+                    <path class="path-line" d="M10,40 L30,40 L35,20 L65,20 L70,40 L90,40" vid="137"></path>
+                </svg>
+            </div>
+        </a>
+
+    </main>
+
+</body></html>
