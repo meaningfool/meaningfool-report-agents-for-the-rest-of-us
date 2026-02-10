@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Two Tools to Rule Them All — Agent SDKs for the Rest of Us</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="content-page">
+
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <span class="mono-label sidebar-header__label">Report</span>
+            <h1 class="sidebar-header__title"><a href="index.html">Agent SDKs for the Rest of Us</a></h1>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="section-1.html" class="nav-item">
+                <span class="nav-num">01</span>
+                <span class="nav-title">Mapping the Terrain</span>
+            </a>
+            <a href="section-2.html" class="nav-item">
+                <span class="nav-num">02</span>
+                <span class="nav-title">What's an Agent, Anyway?</span>
+            </a>
+            <a href="section-3.html" class="nav-item">
+                <span class="nav-num">03</span>
+                <span class="nav-title">Where Orchestration Lives</span>
+            </a>
+            <a href="section-4.html" class="nav-item active">
+                <span class="nav-num">04</span>
+                <span class="nav-title">Two Tools to Rule Them All</span>
+            </a>
+            <a href="section-5.html" class="nav-item">
+                <span class="nav-num">05</span>
+                <span class="nav-title">Agent SDK to Agent Server</span>
+            </a>
+            <a href="section-6.html" class="nav-item">
+                <span class="nav-num">06</span>
+                <span class="nav-title">Architecture by Example</span>
+            </a>
+            <a href="section-7.html" class="nav-item">
+                <span class="nav-num">07</span>
+                <span class="nav-title">Further Reading</span>
+            </a>
+        </nav>
+    </aside>
+
+    <main class="content-main">
+        <div class="top-bar">
+            <div class="top-bar__meta">
+                <div class="meta-item">
+                    <span class="mono-label">Subject</span>
+                    <span class="meta-item__value">Agent Frameworks</span>
+                </div>
+                <div class="meta-item">
+                    <span class="mono-label">Date</span>
+                    <span class="meta-item__value">Feb 2026</span>
+                </div>
+            </div>
+            <div class="meta-item">
+                <span class="mono-label">Section</span>
+                <span class="meta-item__value">04 / 07</span>
+            </div>
+        </div>
+
+        <div class="content-body">
+            <div class="content-body__section-num">04</div>
+            <h1 class="content-body__title">Two Tools to Rule Them All</h1>
+
+<p>Agent SDKs assume access to Bash and the filesystem. These tools provide powerful options. But they also impose some architectural requirements.</p>
+<h2>The limits of predefined tools</h2>
+<p><strong>Tools define what the agent can do.</strong></p>
+<p>If you give it <code>search_web</code>, <code>read_file</code>, and <code>send_email</code>, those are its capabilities. Nothing more.</p>
+<p><strong>Every capability must be anticipated and implemented in advance</strong>:</p>
+<ul>
+<li>Want the agent to compress a file? You need a <code>compress_file</code> tool. </li>
+<li>Want it to resize an image? You need a <code>resize_image</code> tool. </li>
+<li>Want it to check disk space, parse a CSV, or ping a server? Each one requires a tool.</li>
+</ul>
+<p><strong>Even slight changes in the task require updating the tool set.</strong> Say you built a <code>send_email(to, subject, body)</code> tool. Now the user wants to attach a file — you need an <code>attachments</code> parameter. Then they want to CC someone — another parameter. Each small requirement change means updating the tool&#39;s schema and implementation. And every new version has to be tested, documented, and maintained.</p>
+<p><strong>Designing an effective tool list is a hard balance to strike</strong>. Anthropic&#39;s <a href="https://www.anthropic.com/engineering/writing-tools-for-agents">guidance on tool design</a> puts it directly: &quot;Too many tools or overlapping tools can distract agents from pursuing efficient strategies.&quot; But too few tools, or tools that are too narrow, can prevent the agent from solving the problem at all.</p>
+<h2>Bash as the universal tool</h2>
+<h3>Bash is the Unix shell: a command-line interface that has been around since 1989</h3>
+<p>It is the standard way to interact with Unix-like systems (Linux, macOS). You type commands, the shell executes them, you see the output.</p>
+<p>Consider a task like: &quot;find all log files from this week, check which ones contain errors, and count the number of errors in each.&quot; With predefined tools, you would need <code>list_files</code> with date filtering, <code>search_file</code> to find matches, <code>count_matches</code> per file — three separate tools, plus the logic to combine the results. With bash:</p>
+<pre><code class="language-bash"># Find log files from the last 7 days
+find . -name &quot;*.log&quot; -mtime -7
+
+# Which ones contain errors
+grep -l &quot;ERROR&quot; $(find . -name &quot;*.log&quot; -mtime -7)
+
+# Count errors in each
+for f in $(find . -name &quot;*.log&quot; -mtime -7); do
+  echo &quot;$f: $(grep -c &#39;ERROR&#39; &quot;$f&quot;) errors&quot;
+done
+</code></pre>
+<p>Three commands. No tool definitions, no schema changes if the task evolves.</p>
+<h3>Why does bash matter for agents?</h3>
+<p><strong>Bash scripts can replace specialized tools</strong>:</p>
+<ul>
+<li>Giving an agent bash access is giving it access to the entire Unix environment: file operations, network requests, text processing, program execution</li>
+<li>And the ability to combine them in ways you did not anticipate.</li>
+</ul>
+<p><strong>Vercel achieved 100% success rate. 3.5x faster. 37% fewer tokens</strong> :</p>
+<ul>
+<li>Their text-to-SQL agent d0 had 17 specialized tools — query builders, schema inspectors, result formatters — and achieved an 80% success rate.</li>
+<li>Then they <a href="https://vercel.com/blog/we-removed-80-percent-of-our-agents-tools">&quot;deleted most of it and stripped the agent down to a single tool: execute arbitrary bash commands.&quot;</a></li>
+<li>The result: one general-purpose tool outperformed seventeen specialized ones.</li>
+</ul>
+<h3>Bash is not just more flexible — it is also faster.</h3>
+<p><strong>Each tool call means an additional inference. Calling a lot of tools is expensive</strong>: </p>
+<ul>
+<li>Remember the two-step pattern from Part 1: the model requests a tool call, the system executes it, the result feeds back. </li>
+<li>For a task requiring ten tool calls, that is ten inference passes, each one reading the entire (growing) context.</li>
+</ul>
+<p><strong>With bash, the agent can write a script that chains multiple operations together and save on intermediate inferences</strong>:</p>
+<ul>
+<li>The <a href="https://arxiv.org/abs/2402.01030">CodeAct research paper</a> (ICML 2024) found code-based actions achieved up to 20% higher success rates than JSON-based tool calls.</li>
+<li><a href="https://www.anthropic.com/engineering/code-execution-with-mcp">Anthropic</a> and <a href="https://blog.cloudflare.com/code-mode/">Cloudflare&#39;s Code Mode</a> experiment confirmed that writing code beats tool calling</li>
+<li>Manus adopted a similar approach from their launch using <a href="https://manus.im/blog/Context-Engineering-for-AI-Agents-Lessons-from-Building-Manus">fewer than 20 atomic functions</a>, and offload the real work to generated scripts running inside a sandbox.</li>
+</ul>
+<h2>The filesystem as the universal persistence layer</h2>
+<p>To persist an information, a user-facing artifact, a plan or intermediate results, an agent needs a tool and a storage mechanism. </p>
+<p><strong>Predefined persistence tools have the same problem as predefined action tools:</strong></p>
+<ul>
+<li>A <code>save_note(title, content)</code> tool works for text notes. But what about images? JSON structures? Binary files? A directory of related files?</li>
+<li>The tool&#39;s schema defines and limits what can be stored. Each storage mechanism has its own interface, its own constraints.</li>
+</ul>
+<p><strong>The filesystem has no predefined schema:</strong></p>
+<ul>
+<li>A file can contain anything: Markdown, JSON, images, binaries, code. A directory can organize files however makes sense. </li>
+<li>The agent decides where to put it, what to write, what to name it, how to structure it.</li>
+</ul>
+<p><strong>The filesystem allows the agent to communicate with itself</strong>:</p>
+<ul>
+<li>The agent can store information that it may need further down the road. Manus describes this as <a href="https://manus.im/blog/Context-Engineering-for-AI-Agents-Lessons-from-Building-Manus">&quot;File System as Extended Memory&quot;</a>: &quot;unlimited in size, persistent by nature, and directly operable by the agent itself.&quot;</li>
+<li>The filesystem also allows the agent to share memories between sessions, removing the need for elaborate memorization / retrieval tools.</li>
+</ul>
+<h2>What to keep in mind</h2>
+<ul>
+<li><strong>Bash is a universal tool.</strong> Instead of anticipating every capability and implementing a specific tool, you give the agent access to the Unix environment. It can compose arbitrary operations from basic primitives — and LLMs are already trained on how to do this.</li>
+<li><strong>The filesystem is universal persistence.</strong> Instead of defining schemas for what the agent can store, you give it a directory. It can write any file type, organize however makes sense, and the files persist across sessions for free.</li>
+<li><strong>All major agent SDKs assume both.</strong> The Claude Agent SDK, OpenCode, and Codex all ship bash and filesystem tools as built-in. Pi SDK is a notable exception — it can work without filesystem access.</li>
+<li><strong>This has architectural consequences.</strong> Bash and filesystem access require a runtime that provides them. The workaround — containers, VMs, sandboxes — represents a shift from &quot;functions as units of compute&quot; to &quot;sessions as units of compute.&quot;</li>
+<li><strong>An alternative is emerging: reimplement the interpreter.</strong> Vercel&#39;s <a href="https://github.com/vercel-labs/just-bash"><code>just-bash</code></a> is a bash interpreter written in TypeScript — 75+ Unix commands reimplemented with a virtual in-memory filesystem. No real shell, no real filesystem, no container needed. It is the tool behind the d0 results cited above. Pydantic&#39;s <a href="https://github.com/pydantic/monty"><code>monty</code></a> does the same for Python: a subset interpreter written in Rust, where <code>open()</code>, <code>subprocess</code>, and <code>exec()</code> simply do not exist. The trade-off is language completeness — neither covers the full language — but when what the agent needs is tool orchestration rather than arbitrary code, that is often enough.</li>
+</ul>
+
+        </div>
+    </main>
+
+</body>
+</html>

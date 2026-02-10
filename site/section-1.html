@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapping the Terrain — Agent SDKs for the Rest of Us</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="content-page">
+
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <span class="mono-label sidebar-header__label">Report</span>
+            <h1 class="sidebar-header__title"><a href="index.html">Agent SDKs for the Rest of Us</a></h1>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="section-1.html" class="nav-item active">
+                <span class="nav-num">01</span>
+                <span class="nav-title">Mapping the Terrain</span>
+            </a>
+            <a href="section-2.html" class="nav-item">
+                <span class="nav-num">02</span>
+                <span class="nav-title">What's an Agent, Anyway?</span>
+            </a>
+            <a href="section-3.html" class="nav-item">
+                <span class="nav-num">03</span>
+                <span class="nav-title">Where Orchestration Lives</span>
+            </a>
+            <a href="section-4.html" class="nav-item">
+                <span class="nav-num">04</span>
+                <span class="nav-title">Two Tools to Rule Them All</span>
+            </a>
+            <a href="section-5.html" class="nav-item">
+                <span class="nav-num">05</span>
+                <span class="nav-title">Agent SDK to Agent Server</span>
+            </a>
+            <a href="section-6.html" class="nav-item">
+                <span class="nav-num">06</span>
+                <span class="nav-title">Architecture by Example</span>
+            </a>
+            <a href="section-7.html" class="nav-item">
+                <span class="nav-num">07</span>
+                <span class="nav-title">Further Reading</span>
+            </a>
+        </nav>
+    </aside>
+
+    <main class="content-main">
+        <div class="top-bar">
+            <div class="top-bar__meta">
+                <div class="meta-item">
+                    <span class="mono-label">Subject</span>
+                    <span class="meta-item__value">Agent Frameworks</span>
+                </div>
+                <div class="meta-item">
+                    <span class="mono-label">Date</span>
+                    <span class="meta-item__value">Feb 2026</span>
+                </div>
+            </div>
+            <div class="meta-item">
+                <span class="mono-label">Section</span>
+                <span class="meta-item__value">01 / 07</span>
+            </div>
+        </div>
+
+        <div class="content-body">
+            <div class="content-body__section-num">01</div>
+            <h1 class="content-body__title">Mapping the Terrain</h1>
+
+<p><strong>How do you build an AI agent?</strong> There are all these frameworks (LangChain/LangGraph, Vercel AI SDK, PydanticAI, Claude Agent SDK, Mastra, OpenCode) to help you build agents. But I had a hard time pinning down the exact differences between them. It was all very confusing: a clear sign that there were gaps in my knowledge that went deeper than the frameworks&#39; APIs.</p>
+<p><strong>Who is the &quot;Rest of Us&quot;?</strong> I&#39;m probably not the only one confused. I am a PM, so somewhat technical but not overly so. This report is my attempt to share what I&#39;ve learnt about the topic. There is a chance that it contains inaccuracies or errors that I was not technical enough to spot. All forms of constructive feedback are welcome :)</p>
+<p><strong>Mapping the frameworks</strong>: I need maps to orient myself. I&#39;ve come to think of frameworks as belonging to one of the following 3 categories.</p>
+<ul>
+<li><strong>Orchestration frameworks</strong>: LangGraph, PydanticAI, Mastra, Vercel AI SDK</li>
+<li><strong>Agent SDKs</strong>: Claude Agent SDK, Pi SDK</li>
+<li><strong>Agent servers</strong>: Opencode</li>
+</ul>
+<p><strong>What you can expect</strong></p>
+<ul>
+<li><p>Part 1: What &quot;agent&quot; means — the three ingredients every agent is made of.</p>
+</li>
+<li><p>Part 2: How frameworks differ in who decides what happens next — your code or the model.</p>
+</li>
+<li><p>Part 3: Why the most powerful agent tool is a Unix shell, and what that implies.</p>
+</li>
+<li><p>Part 4: What it takes to turn an agent library into an agent server.</p>
+</li>
+<li><p>Part 5: Real projects that made different architectural choices, and what you can learn from them.</p>
+</li>
+<li><p><strong>Horizontal axis — where does orchestration live?</strong><br>Orchestration <em>outside</em> the agent loop (app-driven) ↔ orchestration <em>inside</em> the agent loop (agent-driven).</p>
+</li>
+<li><p><strong>Vertical axis — where is the agent boundary?</strong><br>Agent <em>IN</em> the app (agent-as-a-feature) ↔ agent <em>IS</em> the app (agent-as-a-service).</p>
+</li>
+</ul>
+<!-- TODO: insert 2×2 diagram here -->
+
+<p>But before placing anything on that map, we need to agree on what an &quot;agent&quot; actually is.</p>
+
+        </div>
+    </main>
+
+</body>
+</html>
