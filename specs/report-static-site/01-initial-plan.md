@@ -13,33 +13,33 @@ The report is a 5-part technical analysis (~12-14k words) with code blocks, comp
 ## Spec Breakdown
 
 ### Spec 02: Home Page Prototype
-**Goal**: Build the home page with real report content — header, section cards for each of the 5 parts with actual titles and summaries from the report.
+**Goal**: Build the home page with real report content — header, section cards for each of the 7 sections with actual titles and summaries. Use `frontend-design` skill for design, `dev-browser` for visual testing.
 
 **Slices**:
 1. **Design tokens & base CSS** — Extract shared CSS from references (custom properties, reset, fonts, `.mono-label`, `.stack-icon`)
-2. **Header** — Report metadata bar (title: "Agent SDKs for the Rest of Us", author, date)
-3. **Section cards grid** — 5 cards using actual part titles/summaries from the report, responsive grid (adapts from multi-col to single-col)
-4. **Card interactivity** — Hover states, arrow reveals, links (pointing to part pages, even if they don't exist yet)
+2. **Header** — Report metadata bar (title, subject, date, section count) + subtle author attribution (name + links to meaningfool.net and Twitter)
+3. **Section cards grid** — 7 cards (intro + 5 parts + further reading) using actual titles/summaries, responsive grid
+4. **Card interactivity** — Hover states, arrow reveals, links to section pages
 
-**Testable outcome**: `site/index.html` opens in a browser showing a styled home page with 5 real section cards. Responsive layout works. Cards have the acid-green aesthetic from the references.
+**Testable outcome**: `site/index.html` opens in a browser showing a styled home page with 7 section cards. Responsive layout works.
 
 **Note**: Card visuals (the dark SVG panels) are placeholder for now — addressed in Spec 04.
 
 ---
 
 ### Spec 03: Content Page Prototype
-**Goal**: Build one content page (Part 1) with the actual report text, fully styled. This becomes the template for all other parts.
+**Goal**: Build one content page with actual report text, fully styled. This becomes the template for all sections. Use `frontend-design` skill for design, `dev-browser` for visual testing.
 
 **Slices**:
 1. **Page shell** — Sidebar + main content area layout, top metadata bar
-2. **Sidebar navigation** — Numbered list of all 5 parts, active state for current part
-3. **Content — prose typography** — Render Part 1's actual text with proper heading hierarchy, paragraphs, bold/italic, blockquotes
+2. **Sidebar navigation** — Numbered list of all 7 sections, active state for current section
+3. **Content — prose typography** — Render actual text with proper heading hierarchy, paragraphs, bold/italic, blockquotes
 4. **Content — code blocks** — Dark-background code blocks with syntax highlighting
 5. **Content — tables** — Style the comparison tables from the report
 6. **Content — lists & misc** — Ordered/unordered lists, horizontal rules, inline code
-7. **Remaining parts** — Apply the same template to Parts 2–5
+7. **Remaining sections** — Apply the same template to all sections
 
-**Testable outcome**: `site/part-1.html` shows the full Part 1 content with sidebar nav, all typography elements properly styled. Clicking sidebar links navigates between parts.
+**Testable outcome**: Each section page shows full content with sidebar nav, all typography elements properly styled. Clicking sidebar links navigates between sections.
 
 ---
 
@@ -81,5 +81,13 @@ Prototyping first (02, 03), visuals second (04, 05), infrastructure last (06). E
 ## Open Questions
 - **Domain**: Subdomain (`report.meaningfool.net`) vs. standalone domain — parked for now
 - **Content sourcing**: During prototyping, we'll work with the content directly in HTML. The question of whether/how to pull from the markdown file in `meaningfool-writing` is deferred to Spec 06
-- **Bibliography / further reading**: Not a traditional bibliography — shape TBD as the report finalizes
-- **Report structure**: Currently 5 parts. Could evolve as content settles
+- **Intro section name**: "Introduction" is too generic — needs a name that reflects the 2x2 mental map framing
+- **Further Reading**: Shape TBD as the report finalizes — not a traditional bibliography
+
+## Resolved Decisions
+- **Report title**: "Agent SDKs for the Rest of Us" (lowercase 's', plural)
+- **Sections**: 7 total — intro, 5 content parts, further reading
+- **Attribution**: Author name (subtle) + links to meaningfool.net and Twitter. No separate "back to site" link.
+- **Intro/preamble**: Gets its own section (not on the home page) — the 2x2 mental map is too complex for just the home page
+- **Author bio**: Not displayed, just name + links
+- **Tools**: Use `frontend-design` skill for design work, `dev-browser` skill for browser testing

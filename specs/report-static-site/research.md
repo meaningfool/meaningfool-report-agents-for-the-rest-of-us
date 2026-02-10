@@ -7,14 +7,22 @@
 - This repo (`meaningfool-report-agents-for-the-rest-of-us`) is a standalone static site for that report
 
 ## Report Structure (from the markdown)
-The report is ~12-14k words, organized in 5 parts:
-1. **Part 1 — What's an agent, anyway?** — Definitions, LLMs, tools, tool-calling, agentic loop
-2. **Part 2 — Where orchestration lives** — App-driven vs agent-driven control, orchestration frameworks vs agent SDKs
-3. **Part 3 — Bash and the filesystem** — Why these two tools are critical primitives
-4. **Part 4 — Agent SDK to Agent Server** — Embedded libraries vs networked services, server layers
-5. **Part 5 — Architecture by example** — Four real-world case studies
+The report is ~12-14k words, organized in 7 sections:
+1. **Introduction** — Preamble, author framing ("a PM learning in public"), the 2x2 mental map taxonomy. Gets its own section — too complex for just the home page.
+2. **What's an agent, anyway?** — Definitions, LLMs, tools, tool-calling, agentic loop
+3. **Where orchestration lives** — App-driven vs agent-driven control, orchestration frameworks vs agent SDKs
+4. **Two tools to rule them all: Bash and the filesystem** — Why these two tools are critical primitives
+5. **Agent SDK to Agent Server** — Embedded libraries vs networked services, server layers
+6. **Architecture by example** — Four real-world case studies
+7. **Further Reading** — Evolving from the current bibliography, shape TBD
 
-Content elements: code blocks (pseudocode, JSON, config), comparison tables (4-5), blockquotes, a bibliography, and TODO placeholders for diagrams (2x2 map, progression timeline, onion diagram, flow diagrams).
+Content elements: code blocks (pseudocode, JSON, config), comparison tables (4-5), blockquotes, and TODO placeholders for diagrams (2x2 map, progression timeline, onion diagram, flow diagrams).
+
+## Design Decisions (from discussion)
+- **Attribution**: Author name (subtle, not prominent) + links to meaningfool.net and Twitter. No separate "back to site" link — the attribution link is enough.
+- **Intro section**: The preamble with the 2x2 mental map gets its own section (not squeezed onto the home page). Named something other than just "Introduction".
+- **Further Reading**: Replaces "bibliography" — not a traditional bibliography, shape will evolve.
+- **Author bio**: Not displayed. Just name + links.
 
 ## Technology Decision
 - **Build approach**: Simple Node build script (~50 lines) with `marked` or `markdown-it`
