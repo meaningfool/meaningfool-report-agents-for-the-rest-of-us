@@ -1,6 +1,13 @@
 # Project: Agent SDKs for the Rest of Us
 
-Static website for a technical report. Pure HTML/CSS/JS, no framework.
+Static website for a technical report. Vite build, content fetched from GitHub at build time.
+
+## Commands
+
+- `npm run dev` — Generate pages + start Vite dev server (HMR for CSS)
+- `npm run build` — Generate pages + production build to `dist/`
+- `npm run preview` — Preview the production build locally
+- `npm run generate` — Just regenerate HTML pages from markdown (no Vite)
 
 ## Skills to use
 
@@ -9,17 +16,28 @@ Static website for a technical report. Pure HTML/CSS/JS, no framework.
 
 ## Project structure
 
-- `site/` — The deployable static site (HTML, CSS, JS)
+- `src/css/style.css` — Design system (hand-maintained)
+- `src/*.html` — Generated pages (gitignored, rebuilt from markdown + templates)
+- `scripts/generate.js` — Fetches markdown from GitHub, converts to HTML, writes pages
+- `scripts/sections.js` — Single source of truth for section metadata (titles, summaries, SVGs, markers)
+- `scripts/templates/` — HTML templates for index and section pages
+- `.cache/` — Cached markdown source (gitignored)
+- `dist/` — Build output (gitignored)
+- `site/` — Legacy static files (to be removed)
 - `_references/` — Design inspiration HTML files (not part of the site)
 - `specs/` — Spec-driven development workflow files
 
+## Content source
+
+Markdown is fetched from `meaningfool-writing` repo on GitHub. The URL is configurable via `CONTENT_URL` env var. Default: `_draft/agent-sdk-writeup.md` (may move to `articles/`).
+
 ## Report sections
 
-The report has 7 sections total:
-1. Introduction (preamble + 2x2 mental map framing)
-2. What's an agent, anyway?
-3. Where orchestration lives
-4. Two tools to rule them all: Bash and the filesystem
+The report has 7 sections total (defined in `scripts/sections.js`):
+1. Mapping the Terrain (preamble + 2x2 mental map framing)
+2. What's an Agent, Anyway?
+3. Where Orchestration Lives
+4. Two Tools to Rule Them All
 5. Agent SDK to Agent Server
-6. Architecture by example
-7. Further Reading (shape TBD)
+6. Architecture by Example
+7. Further Reading

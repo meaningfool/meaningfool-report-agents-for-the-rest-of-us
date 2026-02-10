@@ -1,16 +1,17 @@
 {
   "name": "meaningfool-report-agents-for-the-rest-of-us",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "generate": "node scripts/generate.js",
+    "dev": "npm run generate && vite",
+    "build": "npm run generate && vite build",
+    "preview": "vite preview"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
   "dependencies": {
     "marked": "^17.0.1"
+  },
+  "devDependencies": {
+    "vite": "^7.3.1"
   }
 }

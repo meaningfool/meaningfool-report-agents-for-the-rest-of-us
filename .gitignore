@@ -1,1 +1,6 @@
 node_modules/
+dist/
+.cache/
+
+# Generated HTML pages (rebuilt from markdown + templates)
+src/*.html
