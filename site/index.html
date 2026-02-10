@@ -1,16 +1,166 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Agent SDK for the Rest of Us</title>
-  <link rel="stylesheet" href="css/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent SDKs for the Rest of Us</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <main>
-    <h1>Agent SDK for the Rest of Us</h1>
-    <p>Coming soon.</p>
-  </main>
-  <script src="js/main.js"></script>
+
+    <header class="home-header">
+        <div class="home-header__title-block">
+            <span class="mono-label">Technical Report</span>
+            <h1 class="home-header__title">Agent SDKs for the Rest of Us</h1>
+            <div class="home-header__attribution">
+                <span>by Josselin Perrus</span>
+                <span>&middot;</span>
+                <a href="https://meaningfool.net" target="_blank" rel="noopener">meaningfool.net</a>
+                <span>&middot;</span>
+                <a href="https://x.com/meaningfool" target="_blank" rel="noopener">@meaningfool</a>
+            </div>
+        </div>
+
+        <div class="home-header__meta">
+            <div class="meta-item">
+                <span class="mono-label">Subject</span>
+                <span class="meta-item__value">Agent Frameworks</span>
+            </div>
+            <div class="meta-item">
+                <span class="mono-label">Date</span>
+                <span class="meta-item__value">Feb 2026</span>
+            </div>
+            <div class="meta-item">
+                <span class="mono-label">Sections</span>
+                <span class="meta-item__value meta-item__value--large">07</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="sections-grid">
+
+        <!-- 01 — Introduction -->
+        <a href="section-1.html" class="section-card">
+            <div class="card-header">
+                <span class="section-index">01</span>
+                <svg class="icon arrow-link" viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H7M17 7V17"></path></svg>
+            </div>
+            <div class="card-content">
+                <h2>Mapping the Terrain</h2>
+                <p class="summary">A PM's mental map for navigating the agent framework landscape. The 2&times;2 taxonomy that structures this report.</p>
+            </div>
+            <div class="tech-visual">
+                <svg class="path-svg" viewBox="0 0 100 60" preserveAspectRatio="none">
+                    <path class="path-line" d="M10,50 L30,45 L30,20 L60,20 L60,40 L90,30"></path>
+                </svg>
+            </div>
+        </a>
+
+        <!-- 02 — What's an agent, anyway? -->
+        <a href="section-2.html" class="section-card">
+            <div class="card-header">
+                <span class="section-index">02</span>
+                <svg class="icon arrow-link" viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H7M17 7V17"></path></svg>
+            </div>
+            <div class="card-content">
+                <h2>What's an Agent, Anyway?</h2>
+                <p class="summary">An LLM running tools in a loop. Unpacking the three primitives: models, tools, and the agentic loop.</p>
+            </div>
+            <div class="tech-visual">
+                <svg class="path-svg" viewBox="0 0 100 60" preserveAspectRatio="none">
+                    <path class="path-line" d="M10,30 L40,30 L40,10 L70,10 L70,50 L90,50"></path>
+                </svg>
+            </div>
+        </a>
+
+        <!-- 03 — Where orchestration lives -->
+        <a href="section-3.html" class="section-card">
+            <div class="card-header">
+                <span class="section-index">03</span>
+                <svg class="icon arrow-link" viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H7M17 7V17"></path></svg>
+            </div>
+            <div class="card-content">
+                <h2>Where Orchestration Lives</h2>
+                <p class="summary">App-driven vs. agent-driven control flow. The spectrum from developer-defined workflows to model-determined execution.</p>
+            </div>
+            <div class="tech-visual">
+                <svg class="path-svg" viewBox="0 0 100 60" preserveAspectRatio="none">
+                    <path class="path-line" d="M10,10 Q30,50 50,30 T90,30"></path>
+                </svg>
+            </div>
+        </a>
+
+        <!-- 04 — Bash and the filesystem -->
+        <a href="section-4.html" class="section-card">
+            <div class="card-header">
+                <span class="section-index">04</span>
+                <svg class="icon arrow-link" viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H7M17 7V17"></path></svg>
+            </div>
+            <div class="card-content">
+                <h2>Two Tools to Rule Them All</h2>
+                <p class="summary">Why Bash and the filesystem replace specialized tools. The case for universal primitives over predefined capabilities.</p>
+            </div>
+            <div class="tech-visual">
+                <svg class="path-svg" viewBox="0 0 100 60" preserveAspectRatio="none">
+                    <path class="path-line" d="M10,50 C30,50 30,10 50,10 S70,50 90,50"></path>
+                </svg>
+            </div>
+        </a>
+
+        <!-- 05 — Agent SDK to Agent Server -->
+        <a href="section-5.html" class="section-card">
+            <div class="card-header">
+                <span class="section-index">05</span>
+                <svg class="icon arrow-link" viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H7M17 7V17"></path></svg>
+            </div>
+            <div class="card-content">
+                <h2>Agent SDK to Agent Server</h2>
+                <p class="summary">From embedded library to networked service. The six layers you build when crossing the service boundary.</p>
+            </div>
+            <div class="tech-visual">
+                <svg class="path-svg" viewBox="0 0 100 60" preserveAspectRatio="none">
+                    <path class="path-line" d="M20,10 L20,50 M50,10 L50,50 M80,10 L80,50" style="stroke-dasharray: 4,4"></path>
+                    <path class="path-line" d="M10,30 L90,30"></path>
+                </svg>
+            </div>
+        </a>
+
+        <!-- 06 — Architecture by example -->
+        <a href="section-6.html" class="section-card">
+            <div class="card-header">
+                <span class="section-index">06</span>
+                <svg class="icon arrow-link" viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H7M17 7V17"></path></svg>
+            </div>
+            <div class="card-content">
+                <h2>Architecture by Example</h2>
+                <p class="summary">Four real-world projects showing different choices: job agents, transport adapters, full stacks, and personal platforms.</p>
+            </div>
+            <div class="tech-visual">
+                <svg class="path-svg" viewBox="0 0 100 60" preserveAspectRatio="none">
+                    <path class="path-line" d="M50,30 L20,50 M50,30 L80,50 M50,30 L50,10"></path>
+                    <circle cx="50" cy="30" r="3" fill="#DFFF4F"></circle>
+                </svg>
+            </div>
+        </a>
+
+        <!-- 07 — Further Reading -->
+        <a href="section-7.html" class="section-card">
+            <div class="card-header">
+                <span class="section-index">07</span>
+                <svg class="icon arrow-link" viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H7M17 7V17"></path></svg>
+            </div>
+            <div class="card-content">
+                <h2>Further Reading</h2>
+                <p class="summary">Curated references across foundational concepts, runtime infrastructure, and implementation patterns.</p>
+            </div>
+            <div class="tech-visual">
+                <svg class="path-svg" viewBox="0 0 100 60" preserveAspectRatio="none">
+                    <path class="path-line" d="M10,40 L30,40 L35,20 L65,20 L70,40 L90,40"></path>
+                </svg>
+            </div>
+        </a>
+
+    </main>
+
 </body>
 </html>
