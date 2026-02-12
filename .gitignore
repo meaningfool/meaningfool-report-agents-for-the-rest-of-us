@@ -4,3 +4,6 @@ dist/
 
 # Generated HTML pages (rebuilt from markdown + templates)
 src/*.html
+
+# Environment variables
+.env

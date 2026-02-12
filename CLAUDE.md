@@ -41,3 +41,13 @@ The report has 7 sections total (defined in `scripts/sections.js`):
 5. Agent SDK to Agent Server
 6. Architecture by Example
 7. Further Reading
+
+## Writing patterns
+
+### DO
+<!-- Add examples of good writing patterns here -->
+
+### DON'T
+- Unspecific blanket statements: "Library vs service is the fundamental question."
+- Em dashes ("—") for introducing details or examples. Use ":", parentheses, or just "." and a new sentence instead. Apply with discernment — only add the detail if it really adds value, otherwise it makes things heavier.
+- "Same X...but different Y" pattern: "Same principle — ephemeral compute, persistent state — but different mechanisms." This hedges instead of saying something concrete.

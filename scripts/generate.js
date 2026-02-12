@@ -90,9 +90,11 @@ function buildCard(section) {
                 <p class="summary">${section.summary}</p>
             </div>
             <div class="tech-visual">
-                <svg class="path-svg" viewBox="0 0 100 60" preserveAspectRatio="none">
+                ${section.image
+                  ? `<img class="tech-visual__img" src="${section.image}" alt="${section.title}">`
+                  : `<svg class="path-svg" viewBox="0 0 100 60" preserveAspectRatio="none">
                     ${section.svg}
-                </svg>
+                </svg>`}
             </div>
         </a>`;
 }
