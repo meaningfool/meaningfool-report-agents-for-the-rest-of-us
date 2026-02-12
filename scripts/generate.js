@@ -2,28 +2,45 @@ import { marked } from 'marked';
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'fs';
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import YAML from 'yaml';
 import { sections } from './sections.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, '..');
+
+const contentYaml = readFileSync(resolve(ROOT, 'content.yaml'), 'utf-8');
+const { meta, summaries } = YAML.parse(contentYaml);
+
+// Inject summaries from content.yaml into sections
+for (const section of sections) {
+  section.summary = summaries[section.num] || '';
+}
+
 const SRC = resolve(ROOT, 'src');
 const CACHE = resolve(ROOT, '.cache');
 const CACHE_FILE = resolve(CACHE, 'source.md');
 const TEMPLATES = resolve(__dirname, 'templates');
 
-const DEFAULT_URL =
-  'https://raw.githubusercontent.com/meaningfool/meaningfool-writing/main/_draft/agent-sdk-writeup.md';
-const CONTENT_URL = process.env.CONTENT_URL || DEFAULT_URL;
+const DEFAULT_REPO = 'meaningfool/meaningfool-writing';
+const DEFAULT_PATH = '_draft/agent-sdk-writeup.md';
+const CONTENT_REPO = process.env.CONTENT_REPO || DEFAULT_REPO;
+const CONTENT_PATH = process.env.CONTENT_PATH || DEFAULT_PATH;
 
 // ---------------------------------------------------------------------------
-// Fetch markdown (with local cache)
+// Fetch markdown via GitHub API (with local cache)
 // ---------------------------------------------------------------------------
 async function fetchMarkdown() {
   mkdirSync(CACHE, { recursive: true });
 
+  const apiUrl = `https://api.github.com/repos/${CONTENT_REPO}/contents/${CONTENT_PATH}`;
   try {
-    console.log(`  Fetching ${CONTENT_URL}`);
-    const res = await fetch(CONTENT_URL);
+    console.log(`  Fetching ${CONTENT_REPO}/${CONTENT_PATH}`);
+    const res = await fetch(apiUrl, {
+      headers: {
+        Accept: 'application/vnd.github.raw+json',
+        ...(process.env.GITHUB_TOKEN ? { Authorization: `token ${process.env.GITHUB_TOKEN}` } : {}),
+      },
+    });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const md = await res.text();
     writeFileSync(CACHE_FILE, md);
@@ -56,6 +73,31 @@ function extractSection(md, startMarker, endMarker) {
   }
 
   return md.slice(start, end).trim();
+}
+
+// ---------------------------------------------------------------------------
+// Extract section title from the heading line at startMarker
+// e.g. "# Part 1 - What's an agent, anyway?" → "What's an agent, anyway?"
+// e.g. "## Going further" → "Going further"
+// ---------------------------------------------------------------------------
+function extractTitle(md, startMarker) {
+  if (!startMarker) return null;
+  const idx = md.indexOf(startMarker);
+  if (idx === -1) return null;
+  const lineEnd = md.indexOf('\n', idx);
+  const line = md.slice(idx, lineEnd === -1 ? undefined : lineEnd).trim();
+  // Strip markdown heading prefix
+  const withoutHashes = line.replace(/^#+\s*/, '');
+  // Strip "Part N - " or "Part N — " prefix
+  const withoutPart = withoutHashes.replace(/^Part\s+\d+\s*[-—–:]\s*/, '');
+  return withoutPart;
+}
+
+// ---------------------------------------------------------------------------
+// Bump heading levels: ## → #, ### → ##, etc.
+// ---------------------------------------------------------------------------
+function bumpHeadings(md) {
+  return md.replace(/^(#{2,6})\s/gm, (match, hashes) => hashes.slice(1) + ' ');
 }
 
 // ---------------------------------------------------------------------------
@@ -110,10 +152,23 @@ async function main() {
 
   const sectionTemplate = readFileSync(resolve(TEMPLATES, 'section.html'), 'utf-8');
   const indexTemplate = readFileSync(resolve(TEMPLATES, 'index.html'), 'utf-8');
+  const sectionCount = String(sections.length).padStart(2, '0');
 
   // --- Section 1 special case: preamble (before Part 1) ---
-  const preambleStart = md.indexOf('\n', md.indexOf('# Agent Frameworks')) + 1;
+  const preambleStart = md.indexOf('\n', md.indexOf('# Agent SDKs')) + 1;
   const preambleMd = md.slice(preambleStart, md.indexOf('# Part 1')).trim();
+
+  // --- Extract titles from markdown headings ---
+  for (const section of sections) {
+    if (section.num === 1) {
+      // Section 1 title comes from the first ## heading in the preamble
+      const match = preambleMd.match(/^##\s+(.+)$/m);
+      if (match) section.title = match[1];
+    } else {
+      const extracted = extractTitle(md, section.startMarker);
+      if (extracted) section.title = extracted;
+    }
+  }
 
   // --- Generate section pages ---
   for (const section of sections) {
@@ -127,12 +182,19 @@ async function main() {
     // Remove horizontal rule separators between parts
     sectionMd = sectionMd.replace(/^---\s*$/gm, '');
 
+    // Bump heading levels: h2→h1, h3→h2, etc.
+    sectionMd = bumpHeadings(sectionMd);
+
     const bodyHtml = marked.parse(sectionMd, { breaks: true });
     const pad = String(section.num).padStart(2, '0');
 
     const page = sectionTemplate
       .replaceAll('{{TITLE}}', section.title)
       .replaceAll('{{NUM}}', pad)
+      .replaceAll('{{META_TITLE}}', meta.title)
+      .replace('{{META_SUBJECT}}', meta.subject)
+      .replace('{{META_DATE}}', meta.date)
+      .replace('{{META_SECTION_COUNT}}', sectionCount)
       .replace('{{SIDEBAR}}', buildSidebar(section.num))
       .replace('{{CONTENT}}', bodyHtml);
 
@@ -143,7 +205,17 @@ async function main() {
 
   // --- Generate home page ---
   const cards = sections.map(buildCard).join('\n');
-  const indexPage = indexTemplate.replace('{{CARDS}}', cards);
+  const indexPage = indexTemplate
+    .replace('{{CARDS}}', cards)
+    .replaceAll('{{META_TITLE}}', meta.title)
+    .replace('{{META_AUTHOR}}', meta.author)
+    .replace('{{META_SITE}}', meta.site)
+    .replace('{{META_SITE_URL}}', meta.siteUrl)
+    .replace('{{META_TWITTER}}', meta.twitter)
+    .replace('{{META_TWITTER_URL}}', meta.twitterUrl)
+    .replace('{{META_SUBJECT}}', meta.subject)
+    .replace('{{META_DATE}}', meta.date)
+    .replace('{{META_SECTION_COUNT}}', sectionCount);
   writeFileSync(resolve(SRC, 'index.html'), indexPage);
   console.log('  \u2713 index.html');
 

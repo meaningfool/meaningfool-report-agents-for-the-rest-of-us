@@ -1,7 +1,7 @@
 # Spec 05: Content Page Diagrams
 
 ## Goal
-Create 5 diagrams to replace the `<!-- TODO -->` placeholders in the report markdown. Each diagram illustrates a key concept within a content page.
+Create 4 diagrams to replace the `<!-- TODO -->` placeholders in the report markdown. Each diagram illustrates a key concept within a content page.
 
 ## Context
 - Content pages built in Spec 03, home page illustrations done in Spec 04
@@ -12,48 +12,48 @@ Create 5 diagrams to replace the `<!-- TODO -->` placeholders in the report mark
 - Generated images go in `src/images/diagrams/`
 - The `generate.js` pipeline will need to replace `<!-- TODO -->` comments with `<img>` tags pointing to the diagram files
 
+## Design language
+- Dark background (`#1A1A1A`), acid green (`#DFFF4F`), white/grey labels
+- Hand-drawn aesthetic: use Excalidraw-style Virgil font (open source, OFL-1.1) for text
+- Jittery/hand-drawn lines (consistent with the existing home page illustrations)
+- Sketch input images provided for D1, D2, D4; D3 from written instructions
+
 ## Diagram inventory
 
 ### D1 — 2x2 Framework Map (Section 1, source line 24)
 **Replaces**: `<!-- TODO: insert 2×2 diagram here -->`
-**Content**: A 2x2 grid with:
-- X-axis: orchestration outside the agent loop (app-driven) ↔ orchestration inside the agent loop (agent-driven)
-- Y-axis: agent IN the app (agent-as-a-feature) ↔ agent IS the app (agent-as-a-service)
-- Quadrants populated with framework names: LangGraph, PydanticAI, Mastra, Vercel AI SDK (top-left); Claude Agent SDK, Pi SDK (top-right or bottom-right); OpenCode (bottom-right)
-**Style**: Clean grid lines, labels on axes, framework names placed in quadrants.
+**Sketch**: `src/images/diagrams/d1-framework-map/sketch.png`
+**Content**: 4 quadrants formed by two axes. Three quadrants labeled: "AGENT SERVER" (top-left), "AGENT SDK" (bottom-left), "ORCHESTRATION FRAMEWORKS" (bottom-right). Top-right quadrant left empty or subtle.
+**Variations to try**:
+- With and without rounded-rectangle cards in each quadrant
+- Jittery hand-drawn axes (matching existing site style) vs clean arrow axes
+- Virgil / Excalidraw-style hand-drawn lettering for labels
+**Files**: `src/images/diagrams/d1-framework-map/attempt-{1,2,3}.png`
 
 ### D2 — Progression Timeline (Section 3, source line 185)
 **Replaces**: `<!-- TODO: illustration — progression from single prompt → prompt chain → workflow with tools → agent loop -->`
-**Content**: 4 steps as a horizontal timeline or staircase:
-1. The Massive Prompt (one big call)
-2. The Prompt Chain (sequential steps)
-3. The Workflow (steps + tool calling)
-4. The General Agent (tools + goal, model decides steps)
-**Style**: Horizontal progression, each step as a node or block, arrows between them. Reference: Anthropic's "Building Effective Agents" historical ladder.
+**Sketch**: `src/images/diagrams/d2-progression-timeline/sketch.png`
+**Content**: 4 cards numbered 1–4, arranged clockwise:
+1. A long prompt (tall text block)
+2. A prompt chain / workflow (sequential boxes connected by arrows)
+3. A workflow of loops (reuse the jittery circle motif from the site for the loops)
+4. A single agent loop (one jittery circle)
+**Files**: `src/images/diagrams/d2-progression-timeline/attempt-{1,2,3}.png`
 
 ### D3 — App-Driven Workflow Graph (Section 3, source line 228)
 **Replaces**: `<!-- TODO: illustration — app-driven restaurant workflow graph -->`
-**Content**: A directed graph showing a fixed workflow:
-START → Parse Request → Search Restaurants → Get Reviews → Check Availability → Format Response → END
-**Style**: Boxes as nodes, arrows showing the fixed sequence. Emphasize that the developer defines this flow, the LLM is called within each step.
+**No sketch** — built from instructions.
+**Content**: Left-to-right mermaid-style flow graph:
+START → Parse Request → Search Restaurants → [branch: Get Reviews ‖ Check Availability] → Format Response → END
+The branch after "Search Restaurants" splits into two parallel paths (reviews + availability) that rejoin at "Format Response".
+**Style**: Boxes as nodes, arrows for flow, parallel paths shown as a fork/join.
+**Files**: `src/images/diagrams/d3-workflow-graph/attempt-{1,2,3}.png`
 
-### D4 — Embedded vs Hosted (Section 5, source line 446)
-**Replaces**: `<!-- TODO: illustration — two diagrams side by side -->`
-**Content**: Two diagrams side by side:
-- Left ("Embedded"): a box representing "Your machine" containing the app (which contains the library). Single boundary.
-- Right ("Hosted"): "Your machine" box with the app, connected over a network line (the service boundary) to a "Server" box containing the service.
-**Style**: Simple boxes, clear labels, the network connection / service boundary is the key visual element.
-
-### D5 — Onion / Layer Diagram (Section 5, source line 514)
+### D4 — Onion / Layer Diagram (Section 5, source line 512)
 **Replaces**: `<!-- TODO: illustration — concentric circles (onion diagram) -->`
-**Content**: Concentric rings from inside out:
-1. Agent loop (Claude Agent SDK, py-sdk)
-2. Session management
-3. Transport (HTTP/WS)
-4. Routing
-5. Persistence, lifecycle
-Label: "What you build with SDK-first". Optionally show OpenCode as a pre-assembled version with all layers included.
-**Style**: Concentric circles or rounded rectangles, each ring labeled.
+**Sketch**: `src/images/diagrams/d4-onion-layers/sketch.png`
+**Content**: Orbital / concentric diagram. The SDK sits at the left/bottom of the image. Concentric arcs/circles radiate outward, each labeled with a layer: TRANSPORT, ROUTING, PERSISTENCE, LIFECYCLE. At the opposite end (top-right), a visual cue indicates the full stack is now an "AGENT SERVER".
+**Files**: `src/images/diagrams/d4-onion-layers/attempt-{1,2,3}.png`
 
 ## Slices
 
@@ -84,18 +84,14 @@ Save to `src/images/diagrams/d2-progression-timeline.png`.
 Same workflow for the workflow graph in Section 3.
 Save to `src/images/diagrams/d3-workflow-graph.png`.
 
-### Slice 5: D4 — Embedded vs Hosted
-Same workflow for the embedded/hosted diagram in Section 5.
-Save to `src/images/diagrams/d4-embedded-vs-hosted.png`.
-
-### Slice 6: D5 — Onion Layer Diagram
+### Slice 5: D4 — Onion Layer Diagram
 Same workflow for the onion diagram in Section 5.
-Save to `src/images/diagrams/d5-onion-layers.png`.
+Save to `src/images/diagrams/d4-onion-layers.png`.
 
 ## Shared Components Impacted
 - `scripts/generate.js` — Add TODO-to-`<img>` replacement step
 - `src/css/style.css` — Add `.content-diagram` styling for inline diagrams
-- `src/images/diagrams/` — New directory for 5 diagram images
+- `src/images/diagrams/` — New directory for 4 diagram images
 
 ## Pre-existing Tests Impacted
 - None

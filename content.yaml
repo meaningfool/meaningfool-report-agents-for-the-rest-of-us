@@ -1,0 +1,32 @@
+meta:
+  title: Agent SDKs for the Rest of Us
+  author: Josselin Perrus
+  site: meaningfool.net
+  siteUrl: https://meaningfool.net
+  twitter: "@meaningfool"
+  twitterUrl: https://x.com/meaningfool
+  subject: Agent Frameworks
+  date: Feb 2026
+
+summaries:
+  1: >
+    A PM's mental map for navigating the agent framework landscape.
+    The 2×2 taxonomy that structures this report.
+  2: >
+    An LLM running tools in a loop. Unpacking the three primitives:
+    models, tools, and the agentic loop.
+  3: >
+    App-driven vs. agent-driven control flow. The spectrum from
+    developer-defined workflows to model-determined execution.
+  4: >
+    Why Bash and the filesystem replace specialized tools. The case
+    for universal primitives over predefined capabilities.
+  5: >
+    From embedded library to networked service. The six layers you
+    build when crossing the service boundary.
+  6: >
+    Four real-world projects showing different choices: job agents,
+    transport adapters, full stacks, and personal platforms.
+  7: >
+    Curated references across foundational concepts, runtime
+    infrastructure, and implementation patterns.

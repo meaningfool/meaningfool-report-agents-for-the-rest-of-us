@@ -9,7 +9,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "marked": "^17.0.1"
+    "marked": "^17.0.1",
+    "yaml": "^2.8.2"
   },
   "devDependencies": {
     "vite": "^7.3.1"
