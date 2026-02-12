@@ -515,6 +515,19 @@ body.content-page {
     margin-bottom: 8px;
 }
 
+/* --- Diagrams --- */
+.content-diagram {
+    margin: 40px 0;
+    max-width: 100%;
+}
+
+.content-diagram img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: var(--radius-sm);
+}
+
 /* --- Horizontal Rule --- */
 .content-body hr {
     border: 0;

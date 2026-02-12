@@ -101,6 +101,25 @@ function bumpHeadings(md) {
 }
 
 // ---------------------------------------------------------------------------
+// Replace markdown image references with <figure> tags for diagrams
+// Maps clean names from meaningfool-writing to actual diagram paths
+// ---------------------------------------------------------------------------
+const DIAGRAM_MAP = {
+  'framework-map.png': 'images/diagrams/d1-framework-map/attempt-5.png',
+  'progression-timeline.png': 'images/diagrams/d2-progression-timeline/d2-composed-v14.png',
+  'workflow-graph.png': 'images/diagrams/d3-workflow-graph/attempt-6.png',
+  'onion-layers.png': 'images/diagrams/d4-onion-layers/attempt-15-padded.png',
+};
+
+function replaceDiagrams(md) {
+  return md.replace(/!\[([^\]]*)\]\(\.\.\/images\/([^)]+)\)/g, (match, alt, filename) => {
+    const localPath = DIAGRAM_MAP[filename];
+    if (!localPath) return match;
+    return `<figure class="content-diagram"><img src="${localPath}" alt="${alt}"></figure>`;
+  });
+}
+
+// ---------------------------------------------------------------------------
 // Build sidebar HTML
 // ---------------------------------------------------------------------------
 function buildSidebar(activeNum) {
@@ -184,6 +203,9 @@ async function main() {
 
     // Bump heading levels: h2→h1, h3→h2, etc.
     sectionMd = bumpHeadings(sectionMd);
+
+    // Replace diagram image references with <figure> tags
+    sectionMd = replaceDiagrams(sectionMd);
 
     const bodyHtml = marked.parse(sectionMd, { breaks: true });
     const pad = String(section.num).padStart(2, '0');
