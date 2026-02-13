@@ -1,16 +1,27 @@
 import { defineConfig } from 'vite';
 import { resolve } from 'path';
-import { readdirSync } from 'fs';
+import { readdirSync, statSync } from 'fs';
 
-// Collect all HTML files in src/ as Vite entry points
+// Collect all HTML files in src/ (flat + nested slug dirs) as Vite entry points
 function getHtmlInputs() {
   const srcDir = resolve(__dirname, 'src');
   const inputs = {};
   try {
-    for (const file of readdirSync(srcDir)) {
-      if (file.endsWith('.html')) {
-        const name = file.replace('.html', '');
-        inputs[name] = resolve(srcDir, file);
+    for (const entry of readdirSync(srcDir)) {
+      const full = resolve(srcDir, entry);
+      if (entry.endsWith('.html')) {
+        // Flat HTML files (index.html)
+        const name = entry.replace('.html', '');
+        inputs[name] = full;
+      } else if (statSync(full).isDirectory()) {
+        // Nested slug dirs: {slug}/index.html
+        const nested = resolve(full, 'index.html');
+        try {
+          statSync(nested);
+          inputs[entry] = nested;
+        } catch {
+          // No index.html in this dir, skip
+        }
       }
     }
   } catch {

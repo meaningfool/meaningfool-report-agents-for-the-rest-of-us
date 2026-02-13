@@ -4,6 +4,11 @@ dist/
 
 # Generated HTML pages (rebuilt from markdown + templates)
 src/*.html
+src/agent-*/
+src/what-is-an-llm-agent/
+
+# Original unoptimized images (kept for skill development)
+_original-images/
 
 # Environment variables
 .env

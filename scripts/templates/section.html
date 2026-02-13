@@ -4,14 +4,40 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{TITLE}} — {{META_TITLE}}</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <script>
+    // View Transitions: directional slide for section-to-section navigation
+    var THIS_NUM = {{SECTION_IDX}};
+    var SLUG_MAP = {{SLUG_MAP}};
+    function vtSectionNum(url) {
+      var seg = new URL(url, location.origin).pathname.replace(/\/+$/,'').split('/').pop();
+      return SLUG_MAP[seg] || null;
+    }
+    addEventListener('pageswap', function(e) {
+      if (!e.viewTransition) return;
+      var to = vtSectionNum(e.activation?.entry?.url || '');
+      var from = THIS_NUM;
+      if (to == null) return;
+      // Section-to-section: remove individual names so num+title slide with content
+      document.querySelector('.content-body__section-num').style.viewTransitionName = 'none';
+      document.querySelector('.content-body__title').style.viewTransitionName = 'none';
+      e.viewTransition.types.add(to > from ? 'slide-forward' : 'slide-backward');
+    });
+    addEventListener('pagereveal', function(e) {
+      if (!e.viewTransition) return;
+      var from = vtSectionNum(navigation?.activation?.from?.url || '');
+      var to = THIS_NUM;
+      if (from == null) return;
+      e.viewTransition.types.add(to > from ? 'slide-forward' : 'slide-backward');
+    });
+    </script>
 </head>
 <body class="content-page">
 
     <aside class="sidebar">
         <div class="sidebar-header">
             <span class="mono-label sidebar-header__label">Report</span>
-            <h1 class="sidebar-header__title"><a href="index.html">{{META_TITLE}}</a></h1>
+            <h1 class="sidebar-header__title"><a href="/">{{META_TITLE}}</a></h1>
         </div>
         <nav class="sidebar-nav">
 {{SIDEBAR}}
@@ -37,8 +63,8 @@
         </div>
 
         <div class="content-body">
-            <div class="content-body__section-num">{{NUM}}</div>
-            <h1 class="content-body__title">{{TITLE}}</h1>
+            <div class="content-body__section-num" style="view-transition-name: section-{{NUM}}-num">{{NUM}}</div>
+            <h1 class="content-body__title" style="view-transition-name: section-{{NUM}}-title">{{TITLE}}</h1>
 
 {{CONTENT}}
         </div>

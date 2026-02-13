@@ -5,6 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{META_TITLE}}</title>
     <link rel="stylesheet" href="css/style.css">
+    <script>
+    // View Transitions: only keep view-transition-names for the target section
+    var SLUG_MAP = {{SLUG_MAP}};
+    addEventListener('pageswap', function(e) {
+      if (!e.viewTransition) return;
+      var url = e.activation?.entry?.url;
+      if (!url) return;
+      var seg = new URL(url, location.origin).pathname.replace(/\/+$/,'').split('/').pop();
+      var sectionNum = SLUG_MAP[seg];
+      if (!sectionNum) return;
+      var num = String(sectionNum).padStart(2, '0');
+      document.querySelectorAll('[style*="view-transition-name"]').forEach(function(el) {
+        if (!el.style.viewTransitionName.includes('section-' + num + '-')) {
+          el.style.viewTransitionName = 'none';
+        }
+      });
+    });
+    </script>
 </head>
 <body>
 

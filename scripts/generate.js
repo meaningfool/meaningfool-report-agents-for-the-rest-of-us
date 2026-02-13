@@ -105,17 +105,17 @@ function bumpHeadings(md) {
 // Maps clean names from meaningfool-writing to actual diagram paths
 // ---------------------------------------------------------------------------
 const DIAGRAM_MAP = {
-  'framework-map.png': 'images/diagrams/d1-framework-map/attempt-5.png',
-  'progression-timeline.png': 'images/diagrams/d2-progression-timeline/d2-composed-v14.png',
-  'workflow-graph.png': 'images/diagrams/d3-workflow-graph/attempt-6.png',
-  'onion-layers.png': 'images/diagrams/d4-onion-layers/attempt-15-padded.png',
+  'framework-map.png': 'images/diagrams/d1-framework-map/attempt-5.webp',
+  'progression-timeline.png': 'images/diagrams/d2-progression-timeline/d2-composed-v14.webp',
+  'workflow-graph.png': 'images/diagrams/d3-workflow-graph/attempt-6.webp',
+  'onion-layers.png': 'images/diagrams/d4-onion-layers/attempt-15-padded.webp',
 };
 
 function replaceDiagrams(md) {
   return md.replace(/!\[([^\]]*)\]\(\.\.\/images\/([^)]+)\)/g, (match, alt, filename) => {
     const localPath = DIAGRAM_MAP[filename];
     if (!localPath) return match;
-    return `<figure class="content-diagram"><img src="${localPath}" alt="${alt}"></figure>`;
+    return `<figure class="content-diagram"><img src="/${localPath}" alt="${alt}" loading="lazy"></figure>`;
   });
 }
 
@@ -127,7 +127,7 @@ function buildSidebar(activeNum) {
     .map((s) => {
       const active = s.num === activeNum ? ' active' : '';
       const pad = String(s.num).padStart(2, '0');
-      return `            <a href="section-${s.num}.html" class="nav-item${active}">
+      return `            <a href="/${s.slug}/" class="nav-item${active}">
                 <span class="nav-num">${pad}</span>
                 <span class="nav-title">${s.title}</span>
             </a>`;
@@ -141,18 +141,18 @@ function buildSidebar(activeNum) {
 function buildCard(section) {
   const pad = String(section.num).padStart(2, '0');
   return `
-        <a href="section-${section.num}.html" class="section-card">
+        <a href="/${section.slug}/" class="section-card">
             <div class="card-header">
-                <span class="section-index">${pad}</span>
+                <span class="section-index" style="view-transition-name: section-${pad}-num">${pad}</span>
                 <svg class="icon arrow-link" viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H7M17 7V17"></path></svg>
             </div>
             <div class="card-content">
-                <h2>${section.title}</h2>
+                <h2 style="view-transition-name: section-${pad}-title">${section.title}</h2>
                 <p class="summary">${section.summary}</p>
             </div>
             <div class="tech-visual">
                 ${section.image
-                  ? `<img class="tech-visual__img" src="${section.image}" alt="${section.title}">`
+                  ? `<img class="tech-visual__img" src="/${section.image}" alt="${section.title}">`
                   : `<svg class="path-svg" viewBox="0 0 100 60" preserveAspectRatio="none">
                     ${section.svg}
                 </svg>`}
@@ -172,6 +172,11 @@ async function main() {
   const sectionTemplate = readFileSync(resolve(TEMPLATES, 'section.html'), 'utf-8');
   const indexTemplate = readFileSync(resolve(TEMPLATES, 'index.html'), 'utf-8');
   const sectionCount = String(sections.length).padStart(2, '0');
+
+  // Build slug → section number map for view transition scripts
+  const SLUG_MAP = {};
+  for (const s of sections) SLUG_MAP[s.slug] = s.num;
+  const slugMapJson = JSON.stringify(SLUG_MAP);
 
   // --- Section 1 special case: preamble (before Part 1) ---
   const preambleStart = md.indexOf('\n', md.indexOf('# Agent SDKs')) + 1;
@@ -217,12 +222,15 @@ async function main() {
       .replace('{{META_SUBJECT}}', meta.subject)
       .replace('{{META_DATE}}', meta.date)
       .replace('{{META_SECTION_COUNT}}', sectionCount)
+      .replace('{{SECTION_IDX}}', String(section.num))
+      .replace('{{SLUG_MAP}}', slugMapJson)
       .replace('{{SIDEBAR}}', buildSidebar(section.num))
       .replace('{{CONTENT}}', bodyHtml);
 
-    const outPath = resolve(SRC, `section-${section.num}.html`);
-    writeFileSync(outPath, page);
-    console.log(`  \u2713 section-${section.num}.html \u2014 ${section.title}`);
+    const outDir = resolve(SRC, section.slug);
+    mkdirSync(outDir, { recursive: true });
+    writeFileSync(resolve(outDir, 'index.html'), page);
+    console.log(`  \u2713 ${section.slug}/index.html \u2014 ${section.title}`);
   }
 
   // --- Generate home page ---
@@ -237,7 +245,8 @@ async function main() {
     .replace('{{META_TWITTER_URL}}', meta.twitterUrl)
     .replace('{{META_SUBJECT}}', meta.subject)
     .replace('{{META_DATE}}', meta.date)
-    .replace('{{META_SECTION_COUNT}}', sectionCount);
+    .replace('{{META_SECTION_COUNT}}', sectionCount)
+    .replace('{{SLUG_MAP}}', slugMapJson);
   writeFileSync(resolve(SRC, 'index.html'), indexPage);
   console.log('  \u2713 index.html');
 
