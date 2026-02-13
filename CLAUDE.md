@@ -17,37 +17,17 @@ Static website for a technical report. Vite build, content fetched from GitHub a
 ## Project structure
 
 - `src/css/style.css` — Design system (hand-maintained)
-- `src/*.html` — Generated pages (gitignored, rebuilt from markdown + templates)
-- `scripts/generate.js` — Fetches markdown from GitHub, converts to HTML, writes pages
+- `src/index.html`, `src/{slug}/index.html` — Generated pages (gitignored, rebuilt from markdown + templates)
+- `scripts/generate.js` — Fetches markdown + images from GitHub, converts to HTML, writes pages
 - `scripts/sections.js` — Single source of truth for section metadata (titles, summaries, SVGs, markers)
 - `scripts/templates/` — HTML templates for index and section pages
-- `.cache/` — Cached markdown source (gitignored)
+- `.cache/` — Cached markdown and images (gitignored)
 - `dist/` — Build output (gitignored)
-- `site/` — Legacy static files (to be removed)
 - `_references/` — Design inspiration HTML files (not part of the site)
+- `_original-images/` — Unoptimized source images (gitignored, kept for skill development)
 - `specs/` — Spec-driven development workflow files
 
 ## Content source
 
-Markdown is fetched from `meaningfool-writing` repo on GitHub. The URL is configurable via `CONTENT_URL` env var. Default: `_draft/agent-sdk-writeup.md` (may move to `articles/`).
+Markdown and images are fetched from `meaningfool-writing` repo on GitHub at build time. Article images are auto-fetched when referenced in markdown (`![alt](../images/X.webp)`) and cached in `.cache/images/`. Configurable via `CONTENT_REPO` and `CONTENT_PATH` env vars. Default: `articles/2026-02-13-agent-frameworks-for-the-rest-of-us.md`.
 
-## Report sections
-
-The report has 7 sections total (defined in `scripts/sections.js`):
-1. Mapping the Terrain (preamble + 2x2 mental map framing)
-2. What's an Agent, Anyway?
-3. Where Orchestration Lives
-4. Two Tools to Rule Them All
-5. Agent SDK to Agent Server
-6. Architecture by Example
-7. Further Reading
-
-## Writing patterns
-
-### DO
-<!-- Add examples of good writing patterns here -->
-
-### DON'T
-- Unspecific blanket statements: "Library vs service is the fundamental question."
-- Em dashes ("—") for introducing details or examples. Use ":", parentheses, or just "." and a new sentence instead. Apply with discernment — only add the detail if it really adds value, otherwise it makes things heavier.
-- "Same X...but different Y" pattern: "Same principle — ephemeral compute, persistent state — but different mechanisms." This hedges instead of saying something concrete.

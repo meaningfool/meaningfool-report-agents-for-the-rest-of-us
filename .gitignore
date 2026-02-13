@@ -7,6 +7,9 @@ src/*.html
 src/agent-*/
 src/what-is-an-llm-agent/
 
+# Article images (fetched from writing repo at build time)
+src/images/article/
+
 # Original unoptimized images (kept for skill development)
 _original-images/
 

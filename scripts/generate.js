@@ -22,7 +22,7 @@ const CACHE_FILE = resolve(CACHE, 'source.md');
 const TEMPLATES = resolve(__dirname, 'templates');
 
 const DEFAULT_REPO = 'meaningfool/meaningfool-writing';
-const DEFAULT_PATH = '_draft/agent-sdk-writeup.md';
+const DEFAULT_PATH = 'articles/2026-02-13-agent-frameworks-for-the-rest-of-us.md';
 const CONTENT_REPO = process.env.CONTENT_REPO || DEFAULT_REPO;
 const CONTENT_PATH = process.env.CONTENT_PATH || DEFAULT_PATH;
 
@@ -101,21 +101,68 @@ function bumpHeadings(md) {
 }
 
 // ---------------------------------------------------------------------------
-// Replace markdown image references with <figure> tags for diagrams
-// Maps clean names from meaningfool-writing to actual diagram paths
+// Fetch article images from the writing repo (with local cache)
+// Scans markdown for ![alt](../images/X) references, fetches each image,
+// caches in .cache/images/, copies to src/images/, and rewrites paths.
 // ---------------------------------------------------------------------------
-const DIAGRAM_MAP = {
-  'framework-map.png': 'images/diagrams/d1-framework-map/attempt-5.webp',
-  'progression-timeline.png': 'images/diagrams/d2-progression-timeline/d2-composed-v14.webp',
-  'workflow-graph.png': 'images/diagrams/d3-workflow-graph/attempt-6.webp',
-  'onion-layers.png': 'images/diagrams/d4-onion-layers/attempt-15-padded.webp',
-};
+const IMAGE_CACHE = resolve(CACHE, 'images');
+const IMAGE_RE = /!\[([^\]]*)\]\(\.\.\/images\/([^)]+)\)/g;
+
+async function fetchArticleImages(md) {
+  mkdirSync(IMAGE_CACHE, { recursive: true });
+  mkdirSync(resolve(SRC, 'images', 'article'), { recursive: true });
+
+  const matches = [...md.matchAll(IMAGE_RE)];
+  if (matches.length === 0) return;
+
+  // Derive the images/ path relative to the article in the repo
+  const articleDir = CONTENT_PATH.split('/').slice(0, -1).join('/');
+  const imagesBase = articleDir ? `images` : `images`;
+  // The ../images/ in markdown resolves to repo root /images/
+  const repoImagesPath = 'images';
+
+  for (const [, , filename] of matches) {
+    const cachedPath = resolve(IMAGE_CACHE, filename);
+    const destPath = resolve(SRC, 'images', 'article', filename);
+
+    // Skip if already cached
+    if (existsSync(cachedPath)) {
+      copyFileIfNeeded(cachedPath, destPath);
+      continue;
+    }
+
+    const apiUrl = `https://api.github.com/repos/${CONTENT_REPO}/contents/${repoImagesPath}/${filename}`;
+    try {
+      console.log(`  Fetching image: ${filename}`);
+      const res = await fetch(apiUrl, {
+        headers: {
+          Accept: 'application/vnd.github.raw+json',
+          ...(process.env.GITHUB_TOKEN ? { Authorization: `token ${process.env.GITHUB_TOKEN}` } : {}),
+        },
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const buffer = Buffer.from(await res.arrayBuffer());
+      writeFileSync(cachedPath, buffer);
+      copyFileIfNeeded(cachedPath, destPath);
+    } catch (err) {
+      if (existsSync(cachedPath)) {
+        console.warn(`  Fetch failed for ${filename} (${err.message}), using cached version`);
+        copyFileIfNeeded(cachedPath, destPath);
+      } else {
+        console.warn(`  Fetch failed for ${filename} (${err.message}), no cache available`);
+      }
+    }
+  }
+}
+
+function copyFileIfNeeded(src, dest) {
+  const data = readFileSync(src);
+  writeFileSync(dest, data);
+}
 
 function replaceDiagrams(md) {
-  return md.replace(/!\[([^\]]*)\]\(\.\.\/images\/([^)]+)\)/g, (match, alt, filename) => {
-    const localPath = DIAGRAM_MAP[filename];
-    if (!localPath) return match;
-    return `<figure class="content-diagram"><img src="/${localPath}" alt="${alt}" loading="lazy"></figure>`;
+  return md.replace(IMAGE_RE, (match, alt, filename) => {
+    return `<figure class="content-diagram"><img src="/images/article/${filename}" alt="${alt}" loading="lazy"></figure>`;
   });
 }
 
@@ -169,6 +216,9 @@ async function main() {
   const md = await fetchMarkdown();
   mkdirSync(SRC, { recursive: true });
 
+  // Fetch any images referenced in the article
+  await fetchArticleImages(md);
+
   const sectionTemplate = readFileSync(resolve(TEMPLATES, 'section.html'), 'utf-8');
   const indexTemplate = readFileSync(resolve(TEMPLATES, 'index.html'), 'utf-8');
   const sectionCount = String(sections.length).padStart(2, '0');
@@ -179,7 +229,9 @@ async function main() {
   const slugMapJson = JSON.stringify(SLUG_MAP);
 
   // --- Section 1 special case: preamble (before Part 1) ---
-  const preambleStart = md.indexOf('\n', md.indexOf('# Agent SDKs')) + 1;
+  // Find the first top-level heading (# ...) to skip frontmatter/title
+  const titleMatch = md.match(/^# .+$/m);
+  const preambleStart = md.indexOf('\n', titleMatch.index) + 1;
   const preambleMd = md.slice(preambleStart, md.indexOf('# Part 1')).trim();
 
   // --- Extract titles from markdown headings ---
