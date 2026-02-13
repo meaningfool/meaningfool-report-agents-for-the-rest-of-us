@@ -10,23 +10,18 @@ meta:
 
 summaries:
   1: >
-    A PM's mental map for navigating the agent framework landscape.
-    The 2×2 taxonomy that structures this report.
+    A mental map for navigating the agent framework landscape.
+    Orchestration frameworks vs Agent SDKs vs Agent Servers.
   2: >
-    An LLM running tools in a loop. Unpacking the three primitives:
+    An LLM running tools in a loop. Let's unpack the three primitives:
     models, tools, and the agentic loop.
   3: >
-    App-driven vs. agent-driven control flow. The spectrum from
-    developer-defined workflows to model-determined execution.
+    App-driven vs. agent-driven control flow: who owns the orchestration, the app or the agent?
   4: >
-    Why Bash and the filesystem replace specialized tools. The case
-    for universal primitives over predefined capabilities.
+    Specialized tools encode assumptions about how things should be done. Bash and the filesystem are universal primitives that don't limit the agent.
   5: >
-    From embedded library to networked service. The six layers you
-    build when crossing the service boundary.
+    From embedded library to networked service. What capabilities you need to build when crossing the service boundary.
   6: >
-    Four real-world projects showing different choices: job agents,
-    transport adapters, full stacks, and personal platforms.
+    Four real-world projects to showcase different architectural choices: from job agents toOpenClaw personal agents.
   7: >
-    Curated references across foundational concepts, runtime
-    infrastructure, and implementation patterns.
+    Curated references to get deeper into the agent frameworks.

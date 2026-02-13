@@ -373,6 +373,10 @@ body.content-page {
     padding: var(--space-m) var(--space-l);
     border-bottom: 1px solid var(--border);
     flex-shrink: 0;
+    position: sticky;
+    top: 0;
+    background-color: var(--bg-acid);
+    z-index: 10;
 }
 
 .top-bar__meta {
@@ -608,5 +612,68 @@ body.content-page {
 
     .section-card {
         min-height: 300px;
+    }
+}
+
+/* ==========================================================================
+   View Transitions (cross-document / MPA)
+   ========================================================================== */
+
+@media (prefers-reduced-motion: no-preference) {
+    @view-transition {
+        navigation: auto;
+    }
+
+    ::view-transition-group(*) {
+        animation-duration: 0.15s;
+        animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Section pages: capture sidebar and content as independent layers */
+    body.content-page .sidebar {
+        view-transition-name: sidebar;
+    }
+
+    body.content-page .content-main {
+        view-transition-name: content;
+    }
+
+    body.content-page .top-bar {
+        view-transition-name: topbar;
+    }
+
+    /* Sidebar and top bar stay put during section-to-section slides */
+    html:active-view-transition-type(slide-forward)::view-transition-group(sidebar),
+    html:active-view-transition-type(slide-backward)::view-transition-group(sidebar),
+    html:active-view-transition-type(slide-forward)::view-transition-group(topbar),
+    html:active-view-transition-type(slide-backward)::view-transition-group(topbar) {
+        animation-duration: 0s;
+    }
+
+    /* Section-to-section: content slides left/right */
+    @keyframes slide-out-left {
+        to { transform: translateX(-5%); opacity: 0; }
+    }
+    @keyframes slide-in-right {
+        from { transform: translateX(5%); opacity: 0; }
+    }
+    @keyframes slide-out-right {
+        to { transform: translateX(5%); opacity: 0; }
+    }
+    @keyframes slide-in-left {
+        from { transform: translateX(-5%); opacity: 0; }
+    }
+
+    html:active-view-transition-type(slide-forward)::view-transition-old(content) {
+        animation: slide-out-left 0.2s ease both;
+    }
+    html:active-view-transition-type(slide-forward)::view-transition-new(content) {
+        animation: slide-in-right 0.2s ease both;
+    }
+    html:active-view-transition-type(slide-backward)::view-transition-old(content) {
+        animation: slide-out-right 0.2s ease both;
+    }
+    html:active-view-transition-type(slide-backward)::view-transition-new(content) {
+        animation: slide-in-left 0.2s ease both;
     }
 }
