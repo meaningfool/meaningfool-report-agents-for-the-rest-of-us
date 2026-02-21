@@ -613,6 +613,55 @@ body.content-page {
     .section-card {
         min-height: 300px;
     }
+
+    /* --- Content page: stack vertically --- */
+    body.content-page {
+        flex-direction: column;
+        height: auto;
+        overflow: visible;
+    }
+
+    .sidebar {
+        width: 100%;
+        height: auto;
+        flex-shrink: initial;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .sidebar-header {
+        padding: var(--space-m);
+    }
+
+    .sidebar-nav {
+        display: none;
+    }
+
+    .top-bar {
+        padding: var(--space-s) var(--space-m);
+    }
+
+    .top-bar__meta {
+        gap: var(--space-m);
+    }
+
+    .content-body {
+        padding: var(--space-l) var(--space-m);
+    }
+
+    .content-body__section-num {
+        font-size: 48px;
+    }
+
+    .content-body__title {
+        font-size: 28px;
+        margin-bottom: var(--space-l);
+    }
+
+    .content-body table {
+        display: block;
+        overflow-x: auto;
+    }
 }
 
 /* ==========================================================================
