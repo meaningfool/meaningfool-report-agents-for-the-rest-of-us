@@ -1,0 +1,15 @@
+// Cloudflare Workers serves the static build in dist/. There is no Worker code.
+// These settings keep the behaviour of the Cloudflare Pages project it replaces.
+{
+	"$schema": "./node_modules/wrangler/config-schema.json",
+	"name": "agent-frameworks-report",
+	"compatibility_date": "2026-10-19",
+	"assets": {
+		"directory": "./dist",
+		// Unknown URLs get the home page with status 200, as Pages served them.
+		"not_found_handling": "single-page-application",
+		// Pages live at /slug/ (dist/slug/index.html). dist/_redirects, written by
+		// scripts/write-redirects.js, makes /slug -> /slug/ permanent (308), as on Pages.
+		"html_handling": "auto-trailing-slash"
+	}
+}

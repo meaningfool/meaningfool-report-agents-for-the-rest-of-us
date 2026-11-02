@@ -5,8 +5,9 @@
   "scripts": {
     "generate": "node scripts/generate.js",
     "dev": "npm run generate && vite",
-    "build": "npm run generate && vite build",
-    "preview": "vite preview"
+    "build": "npm run generate && vite build && node scripts/write-redirects.js",
+    "preview": "vite preview",
+    "deploy": "npm run build && wrangler deploy"
   },
   "dependencies": {
     "marked": "^17.0.1",
@@ -14,6 +15,7 @@
   },
   "devDependencies": {
     "sharp": "^0.34.5",
-    "vite": "^7.3.1"
+    "vite": "^7.3.1",
+    "wrangler": "^4.151.2"
   }
 }
