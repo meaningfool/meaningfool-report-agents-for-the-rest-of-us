@@ -1,21 +1,25 @@
 # Project: Agent Frameworks for the Rest of Us
 
-Static website for a technical report. Vite build, content and images fetched from GitHub at build time. Deployed to Cloudflare Pages.
+Static website for a technical report. Vite build, content and images fetched from GitHub at build time. Served by Cloudflare Workers (static assets, no Worker code).
 
 ## Commands
 
 - `npm run dev` — Generate pages + start Vite dev server (HMR for CSS)
-- `npm run build` — Generate pages + production build to `dist/`
+- `npm run build` — Generate pages + production build to `dist/`, then write `dist/_redirects`
+- `npm run deploy` — Build, then deploy `dist/` with `wrangler deploy`
 - `npm run preview` — Preview the production build locally
 - `npm run generate` — Just regenerate HTML pages from markdown (no Vite)
 
 ## Deployment
 
-- **Hosting**: Cloudflare Pages, project name `agent-frameworks-report`
-- **Production URL**: https://agent-frameworks-report.meaningfool.net
-- **Pages URL**: https://agent-frameworks-report.pages.dev
-- **Deploy**: `npm run build && npx wrangler pages deploy dist --project-name agent-frameworks-report`
-- DNS: CNAME `agent-frameworks-report.meaningfool.net` → `agent-frameworks-report.pages.dev` (Cloudflare proxied)
+- **Hosting**: Cloudflare Worker `agent-frameworks-report`, configured in `wrangler.jsonc`. It moved from the Cloudflare Pages project of the same name (meaningfool/meaningfool.github.io#18).
+- **Production URL**: https://agent-frameworks-report.meaningfool.net, the Worker's custom domain
+- **workers.dev URL**: https://agent-frameworks-report.josselin-perrus.workers.dev
+- **Deploy**: `npm run deploy`
+- **Behaviour kept from Pages**:
+  - Unknown URLs get the home page with status 200 (`not_found_handling: "single-page-application"`).
+  - `/slug` and `/slug/index.html` redirect permanently (308) to `/slug/`, through `dist/_redirects`, which `scripts/write-redirects.js` writes after the build.
+  - `src/public/_headers` sends the headers Pages added by default, and caches `/assets/*` for 4 hours.
 
 ## Skills to use
 
@@ -29,6 +33,9 @@ Static website for a technical report. Vite build, content and images fetched fr
 - `src/images/card-*.webp` — Homepage card images (committed, optimized WebP)
 - `src/images/article/` — Article images fetched at build time (gitignored)
 - `src/favicon-*.png`, `src/apple-touch-icon.png` — Favicon files
+- `src/public/_headers` — Response headers for Cloudflare, copied to `dist/` as is
+- `scripts/write-redirects.js` — Writes `dist/_redirects` after the Vite build
+- `wrangler.jsonc` — Cloudflare Worker configuration
 - `scripts/generate.js` — Fetches markdown + images from GitHub, converts to HTML, writes pages
 - `scripts/sections.js` — Section metadata: num, slug, markers, card image paths
 - `scripts/templates/` — HTML templates for index and section pages

@@ -15,3 +15,6 @@ _original-images/
 
 # Environment variables
 .env
+
+# Cloudflare Wrangler local state
+.wrangler/
